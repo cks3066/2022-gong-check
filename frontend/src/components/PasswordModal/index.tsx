@@ -13,23 +13,15 @@ import theme from '@/styles/theme';
 
 import styles from './styles';
 
-interface InputModalProps {
+interface PasswordModalProps {
   title: string;
   detail: string;
   placeholder: string;
   buttonText: string;
-  closeModal: () => void;
-  requiredSubmit?: boolean;
+  isAbleClick?: boolean;
 }
 
-const InputModal = ({
-  title,
-  detail,
-  placeholder,
-  buttonText,
-  closeModal,
-  requiredSubmit = false,
-}: InputModalProps) => {
+const PasswordModal = ({ title, detail, placeholder, buttonText }: PasswordModalProps) => {
   const [isDisabledButton, setIsDisabledButton] = useState(true);
   const [password, setPassword] = useState('');
 
@@ -49,7 +41,6 @@ const InputModal = ({
   const handleClickButton = async () => {
     try {
       await setToken(password);
-      closeModal();
       window.location.reload();
     } catch (err) {
       alert('비밀번호를 확인해주세요.');
@@ -58,7 +49,7 @@ const InputModal = ({
 
   return (
     <ModalPortal>
-      <Dimmer closeModal={closeModal} requiredSubmit={requiredSubmit}>
+      <Dimmer isAbleClick={false}>
         <div css={styles.container}>
           <h1 css={styles.title}>{title}</h1>
           <span css={styles.detail}>{detail}</span>
@@ -80,4 +71,4 @@ const InputModal = ({
   );
 };
 
-export default InputModal;
+export default PasswordModal;

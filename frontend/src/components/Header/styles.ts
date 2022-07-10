@@ -6,6 +6,7 @@ const header = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: white;
   box-shadow: 0 6px 4px -4px ${theme.colors.shadow30};
   width: 100%;
   height: 50px;

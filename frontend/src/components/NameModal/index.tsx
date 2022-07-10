@@ -6,6 +6,8 @@ import Button from '@/components/_common/Button';
 import Dimmer from '@/components/_common/Dimmer';
 import Input from '@/components/_common/Input';
 
+import useModal from '@/hooks/useModal';
+
 import apis from '@/apis';
 
 import ModalPortal from '@/ModalPortal';
@@ -19,21 +21,12 @@ interface NameModalProps {
   detail: string;
   placeholder: string;
   buttonText: string;
-  closeModal: () => void;
-  requiredSubmit?: boolean;
   jobId: string | undefined;
 }
 
-const NameModal = ({
-  title,
-  detail,
-  placeholder,
-  buttonText,
-  closeModal,
-  requiredSubmit = false,
-  jobId,
-}: NameModalProps) => {
+const NameModal = ({ title, detail, placeholder, buttonText, jobId }: NameModalProps) => {
   const [isDisabledButton, setIsDisabledButton] = useState(true);
+  const { hideModal } = useModal();
   const [name, setName] = useState('');
   const navigate = useNavigate();
   const { hostId } = useParams();
@@ -48,7 +41,7 @@ const NameModal = ({
     try {
       await apis.postJobComplete({ jobId, author: name });
       alert('제출 되었습니다.');
-      closeModal();
+      hideModal();
       navigate(`/${hostId}/spaces`);
     } catch (err) {
       alert(err);
@@ -57,7 +50,7 @@ const NameModal = ({
 
   return (
     <ModalPortal>
-      <Dimmer closeModal={closeModal} requiredSubmit={requiredSubmit}>
+      <Dimmer isAbleClick={true}>
         <div css={styles.container}>
           <h1 css={styles.title}>{title}</h1>
           <span css={styles.detail}>{detail}</span>
