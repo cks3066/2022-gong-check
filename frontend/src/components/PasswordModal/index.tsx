@@ -5,7 +5,9 @@ import Button from '@/components/_common/Button';
 import Dimmer from '@/components/_common/Dimmer';
 import Input from '@/components/_common/Input';
 
-import apis from '@/apis';
+import useModal from '@/hooks/useModal';
+
+import fetchUser from '@/apis/user';
 
 import ModalPortal from '@/ModalPortal';
 
@@ -23,12 +25,11 @@ interface PasswordModalProps {
 
 const PasswordModal = ({ title, detail, placeholder, buttonText }: PasswordModalProps) => {
   const [isDisabledButton, setIsDisabledButton] = useState(true);
+  const { hideModal } = useModal();
   const [password, setPassword] = useState('');
 
   const setToken = async (password: string) => {
-    const {
-      data: { token },
-    }: any = await apis.postPassword({ hostId: 1, password });
+    const { token } = await fetchUser.postPassword({ hostId: 1, password });
     localStorage.setItem('user', token);
   };
 
@@ -41,6 +42,7 @@ const PasswordModal = ({ title, detail, placeholder, buttonText }: PasswordModal
   const handleClickButton = async () => {
     try {
       await setToken(password);
+      hideModal();
       window.location.reload();
     } catch (err) {
       alert('비밀번호를 확인해주세요.');

@@ -5,7 +5,7 @@ import PageTitle from '@/components/_common/PageTitle';
 
 import SpaceCard from '@/components/SpaceCard';
 
-import apis from '@/apis';
+import fetchUser from '@/apis/user';
 
 import styles from './styles';
 
@@ -21,7 +21,7 @@ type Response = {
 };
 
 const SpaceList = () => {
-  const { isLoading, isError, data, error } = useQuery<Response, AxiosError>(['spaces'], apis.getSpaces);
+  const { isLoading, isError, data, error } = useQuery<Response, AxiosError>(['spaces'], fetchUser.getSpaces);
 
   if (isLoading) {
     return <div>로딩중...</div>;

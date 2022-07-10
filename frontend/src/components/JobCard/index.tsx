@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import CardTitle from '@/components/_common/CardTitle';
 
-import apis from '@/apis';
+import fetchUser from '@/apis/user';
 
 import styles from './styles';
 
@@ -15,10 +15,10 @@ const JobCard = ({ jobName, id }: JobCardProps) => {
   const navigate = useNavigate();
 
   const handleClick = async () => {
-    const { active } = await apis.getJobActive({ jobId: id });
+    const { active } = await fetchUser.getJobActive({ jobId: id });
 
     if (!active) {
-      await apis.postNewTasks({ jobId: id });
+      await fetchUser.postNewTasks({ jobId: id });
     }
 
     navigate(id.toString());

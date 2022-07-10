@@ -8,7 +8,7 @@ import Input from '@/components/_common/Input';
 
 import useModal from '@/hooks/useModal';
 
-import apis from '@/apis';
+import fetchUser from '@/apis/user';
 
 import ModalPortal from '@/ModalPortal';
 
@@ -21,7 +21,7 @@ interface NameModalProps {
   detail: string;
   placeholder: string;
   buttonText: string;
-  jobId: string | undefined;
+  jobId: string;
 }
 
 const NameModal = ({ title, detail, placeholder, buttonText, jobId }: NameModalProps) => {
@@ -39,7 +39,7 @@ const NameModal = ({ title, detail, placeholder, buttonText, jobId }: NameModalP
 
   const handleClickButton = async () => {
     try {
-      await apis.postJobComplete({ jobId, author: name });
+      await fetchUser.postJobComplete({ jobId, author: name });
       alert('제출 되었습니다.');
       hideModal();
       navigate(`/${hostId}/spaces`);

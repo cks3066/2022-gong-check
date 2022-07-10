@@ -11,7 +11,7 @@ import TaskCard from '@/components/TaskCard';
 
 import useModal from '@/hooks/useModal';
 
-import apis from '@/apis';
+import fetchUser from '@/apis/user';
 
 import theme from '@/styles/theme';
 
@@ -29,7 +29,7 @@ type TaskType = {
   checked: boolean;
 };
 
-type Response = {
+type ApiResponseData = {
   sections: SectionType[];
   hasNext: boolean;
 };
@@ -50,7 +50,7 @@ const TaskList = () => {
     data,
     error,
     refetch: refetchGetTasks,
-  } = useQuery<Response, AxiosError>(['section', jobId], () => apis.getTasks({ jobId }));
+  } = useQuery<ApiResponseData, AxiosError>(['section', jobId], () => fetchUser.getTasks({ jobId }));
 
   const handleClickButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ const TaskList = () => {
         detail="확인 버튼을 누르면 제출됩니다."
         placeholder="이름을 입력해주세요."
         buttonText="확인"
-        jobId={jobId}
+        jobId={jobId as string}
       />
     );
   };

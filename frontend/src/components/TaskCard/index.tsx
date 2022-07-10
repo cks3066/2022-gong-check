@@ -1,6 +1,6 @@
 import CheckBox from '@/components/_common/Checkbox';
 
-import apis from '@/apis';
+import fetchUser from '@/apis/user';
 
 import styles from './styles';
 
@@ -21,7 +21,7 @@ const TaskCard = ({ tasks, refetchGetTasks }: TaskCardProps) => {
     id: number
   ) => {
     e.preventDefault();
-    await apis.postCheckTask({ taskId: id });
+    await fetchUser.postCheckTask({ taskId: id });
     refetchGetTasks();
   };
 

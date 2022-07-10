@@ -6,7 +6,7 @@ import PageTitle from '@/components/_common/PageTitle';
 
 import JobCard from '@/components/JobCard';
 
-import apis from '@/apis';
+import fetchUser from '@/apis/user';
 
 import styles from './styles';
 
@@ -21,7 +21,9 @@ type Response = {
 };
 
 const JobList = () => {
-  const { isLoading, isError, data, error } = useQuery<Response, AxiosError>(['jobs'], () => apis.getJobs({ spaceId }));
+  const { isLoading, isError, data, error } = useQuery<Response, AxiosError>(['jobs'], () =>
+    fetchUser.getJobs({ spaceId })
+  );
   const { spaceId } = useParams();
 
   if (isLoading) {
