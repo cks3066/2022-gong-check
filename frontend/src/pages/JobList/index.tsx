@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 
 import PageTitle from '@/components/_common/PageTitle';
@@ -14,29 +15,32 @@ type JobType = {
   name: string;
 };
 
+type Response = {
+  jobs: JobType[];
+  hasNext: boolean;
+};
+
 const JobList = () => {
-  const [jobs, setJobs] = useState<Array<JobType>>([]);
+  const { isLoading, isError, data, error } = useQuery<Response, AxiosError>(['jobs'], () => apis.getJobs({ spaceId }));
   const { spaceId } = useParams();
 
-  useEffect(() => {
-    const getSpaces = async () => {
-      const {
-        data: { jobs },
-      } = await apis.getJobs({ spaceId });
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
 
-      setJobs(jobs);
-    };
+  if (isError) {
+    alert(error.message);
 
-    getSpaces();
-  }, []);
+    return <div>에러 발생</div>;
+  }
 
   return (
     <div css={styles.layout}>
       <PageTitle>
-        체크리스트 목록(<span>{jobs.length}</span>)
+        체크리스트 목록(<span>{data?.jobs.length}</span>)
       </PageTitle>
       <div css={styles.contents}>
-        {jobs.map(job => (
+        {data?.jobs.map(job => (
           <JobCard jobName={job.name} key={job.id} id={job.id} />
         ))}
       </div>

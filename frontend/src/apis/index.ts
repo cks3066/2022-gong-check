@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosPromise } from 'axios';
 
 const DEV_URL = 'http://localhost:8080';
 // const PROD_URL = process.env.REACT_APP_API_ROOT;
@@ -43,26 +43,29 @@ const postPassword = async ({ hostId, password }: any) => {
 
 // 공간 목록 {page,size}
 const getSpaces = async () => {
-  return await axiosInstanceToken({
+  const { data } = await axiosInstanceToken({
     method: 'GET',
     url: `api/spaces`,
   });
+  return data;
 };
 
 // 업무 종류
 const getJobs = async ({ spaceId }: any) => {
-  return await axiosInstanceToken({
+  const { data } = await axiosInstanceToken({
     method: 'GET',
     url: `/api/spaces/${spaceId}/jobs`,
   });
+  return data;
 };
 
 // 진행중인 작업이 있는지 확인
 const getJobActive = async ({ jobId }: any) => {
-  return await axiosInstanceToken({
+  const { data } = await axiosInstanceToken({
     method: 'GET',
     url: `/api/jobs/${jobId}/active`,
   });
+  return data;
 };
 
 // 새 작업 생성
@@ -75,10 +78,11 @@ const postNewTasks = async ({ jobId }: any) => {
 
 // 진행중인 작업 불러오기
 const getTasks = async ({ jobId }: any) => {
-  return await axiosInstanceToken({
+  const { data } = await axiosInstanceToken({
     method: 'GET',
     url: `/api/jobs/${jobId}/tasks`,
   });
+  return data;
 };
 
 // 체크박스 체크하기

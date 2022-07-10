@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom';
-
 import CheckBox from '@/components/_common/Checkbox';
 
 import apis from '@/apis';
@@ -13,20 +11,18 @@ type TaskType = {
 };
 
 type TaskCardProps = {
-  tasks: Array<TaskType>;
-  getSections: (jobId: string) => void;
+  tasks: TaskType[];
+  refetchGetTasks: any;
 };
 
-const TaskCard = ({ tasks, getSections }: TaskCardProps) => {
-  const { jobId } = useParams();
-
+const TaskCard = ({ tasks, refetchGetTasks }: TaskCardProps) => {
   const handleClickCheckBox = async (
     e: React.MouseEvent<HTMLElement, MouseEvent> | React.ChangeEvent<HTMLElement>,
     id: number
   ) => {
     e.preventDefault();
     await apis.postCheckTask({ taskId: id });
-    await getSections(jobId as string);
+    refetchGetTasks();
   };
 
   return (

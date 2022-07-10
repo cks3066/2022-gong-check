@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import { useQuery } from 'react-query';
 
 import PageTitle from '@/components/_common/PageTitle';
 
@@ -14,28 +15,31 @@ type SpaceType = {
   id: number;
 };
 
+type Response = {
+  spaces: SpaceType[];
+  hasNext: boolean;
+};
+
 const SpaceList = () => {
-  const [spaces, setSpaces] = useState<Array<SpaceType>>([]);
+  const { isLoading, isError, data, error } = useQuery<Response, AxiosError>(['spaces'], apis.getSpaces);
 
-  useEffect(() => {
-    const getSpaces = async () => {
-      const {
-        data: { spaces },
-      } = await apis.getSpaces();
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
 
-      setSpaces(spaces);
-    };
+  if (isError) {
+    alert(error.message);
 
-    getSpaces();
-  }, []);
+    return <div>에러 발생</div>;
+  }
 
   return (
     <div css={styles.layout}>
       <PageTitle>
-        장소 목록 (<span>{spaces.length}</span>)
+        장소 목록 (<span>{data?.spaces.length}</span>)
       </PageTitle>
       <div css={styles.contents}>
-        {spaces.map(space => (
+        {data?.spaces.map(space => (
           <SpaceCard spaceName={space.name} imageUrl={space.imageUrl} key={space.id} id={space.id} />
         ))}
       </div>

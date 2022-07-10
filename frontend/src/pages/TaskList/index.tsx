@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 
 import Button from '@/components/_common/Button';
@@ -19,7 +20,7 @@ import styles from './styles';
 type SectionType = {
   id: number;
   name: string;
-  tasks: Array<TaskType>;
+  tasks: TaskType[];
 };
 
 type TaskType = {
@@ -28,7 +29,12 @@ type TaskType = {
   checked: boolean;
 };
 
-const isAllChecked = (sections: Array<SectionType>): boolean => {
+type Response = {
+  sections: SectionType[];
+  hasNext: boolean;
+};
+
+const isAllChecked = (sections: SectionType[]): boolean => {
   return sections
     .map(section => section.tasks.every(task => task.checked === true))
     .every(isChecked => isChecked === true);
@@ -37,15 +43,14 @@ const isAllChecked = (sections: Array<SectionType>): boolean => {
 const TaskList = () => {
   const { jobId } = useParams();
   const { showModal } = useModal();
-  const [sections, setSections] = useState<Array<SectionType>>([]);
 
-  const getSections = async (jobId: string) => {
-    const {
-      data: { sections },
-    } = await apis.getTasks({ jobId });
-
-    setSections(sections);
-  };
+  const {
+    isLoading,
+    isError,
+    data,
+    error,
+    refetch: refetchGetTasks,
+  } = useQuery<Response, AxiosError>(['section', jobId], () => apis.getTasks({ jobId }));
 
   const handleClickButton = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -60,11 +65,17 @@ const TaskList = () => {
     );
   };
 
-  useEffect(() => {
-    getSections(jobId as string);
-  }, []);
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
 
-  if (!sections.length) return <div>등록된 체크리스트가 없습니다.</div>;
+  if (isError) {
+    alert(error.message);
+
+    return <div>에러 발생</div>;
+  }
+
+  if (!data?.sections.length) return <div>등록된 체크리스트가 없습니다.</div>;
 
   return (
     <div css={styles.layout}>
@@ -77,10 +88,10 @@ const TaskList = () => {
             align-items: center;
           `}
         >
-          {sections.map(({ id, name, tasks }) => (
+          {data?.sections.map(({ id, name, tasks }) => (
             <section css={styles.location} key={id}>
               <p css={styles.locationName}>{name}</p>
-              <TaskCard tasks={tasks} getSections={getSections} />
+              <TaskCard tasks={tasks} refetchGetTasks={refetchGetTasks} />
             </section>
           ))}
           <Button
@@ -88,10 +99,10 @@ const TaskList = () => {
             css={css`
               margin-bottom: 0;
               width: 256px;
-              background: ${isAllChecked(sections) ? theme.colors.primary : theme.colors.gray};
+              background: ${isAllChecked(data?.sections) ? theme.colors.primary : theme.colors.gray};
             `}
             onClick={handleClickButton}
-            disabled={!isAllChecked(sections)}
+            disabled={!isAllChecked(data?.sections)}
           >
             제출
           </Button>
